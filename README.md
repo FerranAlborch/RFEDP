@@ -1,6 +1,8 @@
 # RIPFEDP - Randomized Inner Product Functional Encryption for Differential Privacy
 This repository contains the source code for the evaluation times from the randomized inner product functional encryption scheme in the paper **Computational Differential Privacy for Encrypted Databases Supporting Linear Queries** accepted at Proceedings on Privacy Enhancing Technologies (PoPETs), Issue 4, 2024. 
 
+**Note:** This code is a proof of concept implementation and not ready for produciton. As such, use in production at your own risk.
+
 # Description
 
 The purpose of this source code in C and C++ is to give estimates on the evaluation times of the randomized inner product functional encryption (RIPFE) scheme proposed in Section 4 of the article. It is a construction based on any generic inner product functional encryption (IPFE) scheme satisfying simulation security, and for this implementation we base ourselves on the scheme from Section 3 in the paper **Adaptive Simulation Security for Inner Product Functional Encryption** by Agrawal, Libert, Maitra and Titiu published at PKC 2020.
@@ -56,7 +58,7 @@ sudo snap install docker
 
 2. Build Docker image.
 ```
-docker build -t rfedp .
+docker build -t ripfedp .
 ```
 
 ## Running our code
@@ -79,7 +81,7 @@ is satisfied so that the discrete logarithm performed during decryption takes a 
 
 First run the docker image.
 ```
-docker run -it rfedp
+docker run -it ripfedp
 ```
 
 This command will give you access to the command line inside the image. Then you can run a test using the same command as without Docker.
