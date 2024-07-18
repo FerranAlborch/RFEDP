@@ -32,9 +32,6 @@
 
 
 /**
- *Function for adding two mpz modulo a number
-*/
-/**
 * \fn void mpz_add_mod(mpz_t res, mpz_t a, mpz_t b, mpz_t modulo)
 * \brief It adds two multiple precision integers with a modulo.
 *

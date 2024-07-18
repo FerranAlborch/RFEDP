@@ -16,6 +16,7 @@
 */
 
 #include <gmp.h>
+#include <mcl/bn_c384_256.h>
 
 #ifdef __cpluplus
 extern "C" {

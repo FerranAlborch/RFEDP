@@ -19,11 +19,11 @@
 #include <stdint.h>
 #include <gmp.h>
 #include <time.h>
-#include "IPFE/fe_DDH.h"
+#include "IPFE/ipfe_DDH.h"
 #include "config.h"
 
 
-bool fe_DDH_precomp_init(fe_DDH *s, size_t l, mpz_t bound_X, mpz_t bound_Y) {
+bool ipfe_DDH_precomp_init(ipfe_DDH *s, size_t l, mpz_t bound_X, mpz_t bound_Y) {
     
     mpz_t check;
     mpz_inits(s->bound_X, s->bound_Y, s->g, s->p, s->q, s->h, s->phi_p, check, NULL);
@@ -96,7 +96,7 @@ bool fe_DDH_precomp_init(fe_DDH *s, size_t l, mpz_t bound_X, mpz_t bound_Y) {
 }
 
 
-void fe_DDH_free(fe_DDH *s) {
+void ipfe_DDH_free(ipfe_DDH *s) {
     mpz_clears(s->bound_X, s->bound_Y, s->g, s->p, s->q, s->h, s->phi_p, NULL);
     FCombInt_free(&s->F[0]);
     FCombInt_free(&s->F[1]);
@@ -105,35 +105,35 @@ void fe_DDH_free(fe_DDH *s) {
 }
 
 
-void fe_DDH_sec_key_init(fe_DDH_sec_key *msk) {
+void ipfe_DDH_sec_key_init(ipfe_DDH_sec_key *msk) {
     mpz_init2(msk->seed_s, SEED_SIZE * sizeof(uint64_t));
     mpz_init2(msk->seed_t, SEED_SIZE * sizeof(uint64_t));
     return;
 }
 
 
-void fe_DDH_sec_key_free(fe_DDH_sec_key *msk) {
+void ipfe_DDH_sec_key_free(ipfe_DDH_sec_key *msk) {
     mpz_clear(msk->seed_s);
     mpz_clear(msk->seed_t);
     return;
 }
 
 
-void fe_DDH_fe_key_init(fe_DDH_fe_key *fe_key) {
+void ipfe_DDH_fe_key_init(ipfe_DDH_fe_key *fe_key) {
     fe_key->sy_ty = (mpz_t *) malloc(2 * sizeof(mpz_t));
     mpz_inits(fe_key->sy_ty[0], fe_key->sy_ty[1], NULL);
     return;
 }
 
 
-void fe_DDH_fe_key_free(fe_DDH_fe_key *fe_key) {
+void ipfe_DDH_fe_key_free(ipfe_DDH_fe_key *fe_key) {
     mpz_clears(fe_key->sy_ty[0], fe_key->sy_ty[1], NULL);
     free(fe_key->sy_ty);
     return;
 }
 
 
-void fe_DDH_ciphertext_init(fe_DDH_ciphertext *c, fe_DDH *s) {
+void ipfe_DDH_ciphertext_init(ipfe_DDH_ciphertext *c, ipfe_DDH *s) {
     c->l = s->l;
     
     c->C_D = (mpz_t *) malloc(2 * sizeof(mpz_t));
@@ -145,7 +145,7 @@ void fe_DDH_ciphertext_init(fe_DDH_ciphertext *c, fe_DDH *s) {
 }
 
 
-void fe_DDH_ciphertext_free(fe_DDH_ciphertext *c) {
+void ipfe_DDH_ciphertext_free(ipfe_DDH_ciphertext *c) {
     mpz_clears(c->C_D[0], c->C_D[1], NULL);
     for(size_t i = 0; i < c->l; ++i) mpz_clear(c->E[i]);
     free(c->C_D);
@@ -154,7 +154,7 @@ void fe_DDH_ciphertext_free(fe_DDH_ciphertext *c) {
 }
 
 
-void fe_DDH_generate_master_keys(fe_DDH_sec_key *msk, fe_DDH *s, double timesSetUp[]) {
+void ipfe_DDH_generate_master_keys(ipfe_DDH_sec_key *msk, ipfe_DDH *s, double timesSetUp[]) {
     // Sample the seeds
     clock_t begin = clock();
     generate_seed(msk->seed_s, SEED_SIZE);
@@ -173,7 +173,7 @@ void fe_DDH_generate_master_keys(fe_DDH_sec_key *msk, fe_DDH *s, double timesSet
 }
 
 
-bool fe_DDH_encrypt(fe_DDH_ciphertext *ciphertext, fe_DDH *s, mpz_t *x, fe_DDH_sec_key *msk, double timesEnc[]) {
+bool ipfe_DDH_encrypt(ipfe_DDH_ciphertext *ciphertext, ipfe_DDH *s, mpz_t *x, ipfe_DDH_sec_key *msk, double timesEnc[]) {
     // Initialize secure seed for r and sample
     mpz_t seed;
     mpz_init2(seed, SEED_SIZE * sizeof(uint64_t));
@@ -249,7 +249,7 @@ bool fe_DDH_encrypt(fe_DDH_ciphertext *ciphertext, fe_DDH *s, mpz_t *x, fe_DDH_s
 }
 
 
-bool fe_DDH_derive_fe_key(fe_DDH_fe_key *fe_key, fe_DDH *s, fe_DDH_sec_key *msk, mpz_t *y, double timesKeyGen[]) {
+bool ipfe_DDH_derive_fe_key(ipfe_DDH_fe_key *fe_key, ipfe_DDH *s, ipfe_DDH_sec_key *msk, mpz_t *y, double timesKeyGen[]) {
     // Verifiy decryption vector is in bound
     bool check = true;
     for(size_t i = 0; i < s->l; ++i) {
@@ -309,7 +309,7 @@ bool fe_DDH_derive_fe_key(fe_DDH_fe_key *fe_key, fe_DDH *s, fe_DDH_sec_key *msk,
 }
 
 
-bool fe_DDH_decrypt_exp(mpz_t r, fe_DDH *s, fe_DDH_ciphertext *ciphertext, fe_DDH_fe_key *fe_key, mpz_t *y, double timesDec[]) {
+bool ipfe_DDH_decrypt_exp(mpz_t r, ipfe_DDH *s, ipfe_DDH_ciphertext *ciphertext, ipfe_DDH_fe_key *fe_key, mpz_t *y, double timesDec[]) {
     // Verifiy decryption vector is in bound
     bool check = true;
     for(size_t i = 0; i < s->l; ++i) {

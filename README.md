@@ -1,11 +1,11 @@
-# RIPFEDP - Randomized Inner Product Functional Encryption for Differential Privacy
-This repository contains the source code for the evaluation times from the randomized inner product functional encryption scheme in the paper **Computational Differential Privacy for Encrypted Databases Supporting Linear Queries** accepted at Proceedings on Privacy Enhancing Technologies (PoPETs), Issue 4, 2024. 
+# RFEDP - Randomized Functional Encryption for Differential Privacy
+**Change** This repository contains the source code for the evaluation times from the randomized inner product functional encryption scheme in the paper **Computational Differential Privacy for Encrypted Databases Supporting Linear Queries** accepted at Proceedings on Privacy Enhancing Technologies (PoPETs), Issue 4, 2024. 
 
 **Note:** This code is a proof of concept implementation and not ready for produciton. As such, use in production at your own risk.
 
 # Description
 
-The purpose of this source code in C and C++ is to give estimates on the evaluation times of the randomized inner product functional encryption (RIPFE) scheme proposed in Section 4 of the article. It is a construction based on any generic inner product functional encryption (IPFE) scheme satisfying simulation security, and for this implementation we base ourselves on the scheme from Section 3 in the paper **Adaptive Simulation Security for Inner Product Functional Encryption** by Agrawal, Libert, Maitra and Titiu published at PKC 2020.
+**Change** The purpose of this source code in C and C++ is to give estimates on the evaluation times of the randomized inner product functional encryption (RIPFE) scheme proposed in Section 4 of the article. It is a construction based on any generic inner product functional encryption (IPFE) scheme satisfying simulation security, and for this implementation we base ourselves on the scheme from Section 3 in the paper **Adaptive Simulation Security for Inner Product Functional Encryption** by Agrawal, Libert, Maitra and Titiu published at PKC 2020.
 
 For more information on the choice of scheme and the implementation particulars as well as the results obtained we refer to Section 6 of the paper. For the exact schemes being implemented in this repository we refer to Appendix I of the paper.
 
@@ -33,6 +33,7 @@ For more information on the choice of scheme and the implementation particulars 
 ## Requirements 
 
 - [GMP](https://gmplib.org/): Library to handle multiple precision integers, under the GNU LGPL v3 license. The version used is 6.2.1. 
+- [mcl](https://github.com/herumi/mcl/tree/master)
 
 ## Building Our Code
 
@@ -43,6 +44,16 @@ For more information on the choice of scheme and the implementation particulars 
 sudo apt-get update
 sudo apt-get install libgmp-dev
 ```
+
+```
+git clone https://github.com/herumi/mcl
+cd mcl
+make -j4
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/lib
+```
+
+**Note** Temporary, if not add to .bashrc
+
 2. Run makefile.
 ```
 make release

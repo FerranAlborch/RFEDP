@@ -20,74 +20,74 @@
 #include <time.h>
 #include <cstdint>
 #include "utils/dlog.hpp"
-#include "RIPFE/rfe_DDH.h"
+#include "RFE/ripfe_DDH.h"
 #include "utils/modulo.h"
 #include "config.h"
 
 
 
 
-bool rfe_DDH_precomp_init(rfe_DDH *S, size_t l, mpz_t bound_X, int Q, mpz_t bound_Y) {
+bool ripfe_DDH_precomp_init(ripfe_DDH *S, size_t l, mpz_t bound_X, int Q, mpz_t bound_Y) {
     S->epsilon = EPSILON;
     S->Q = Q;
 
-    bool err = fe_DDH_precomp_init(&S->s, l, bound_X, bound_Y);
+    bool err = ipfe_DDH_precomp_init(&S->s, l, bound_X, bound_Y);
 
     return err;
 }
 
 
-void rfe_DDH_free(rfe_DDH *S) {
-    fe_DDH_free(&S->s);
+void ripfe_DDH_free(ripfe_DDH *S) {
+    ipfe_DDH_free(&S->s);
     return;
 }
 
 
-void rfe_DDH_sec_key_init(rfe_DDH_sec_key *MSK) {
-    fe_DDH_sec_key_init(&MSK->msk);
+void ripfe_DDH_sec_key_init(ripfe_DDH_sec_key *MSK) {
+    ipfe_DDH_sec_key_init(&MSK->msk);
 
     mpz_init2(MSK->seed_u, SEED_SIZE * sizeof(uint64_t));
     return;
 }
 
 
-void rfe_DDH_sec_key_free(rfe_DDH_sec_key *MSK) {
-    fe_DDH_sec_key_free(&MSK->msk);
+void ripfe_DDH_sec_key_free(ripfe_DDH_sec_key *MSK) {
+    ipfe_DDH_sec_key_free(&MSK->msk);
 
     mpz_clear(MSK->seed_u);
     return;
 }
 
 
-void rfe_DDH_fe_key_init(rfe_DDH_fe_key *FE_key) {
-    fe_DDH_fe_key_init(&FE_key->fe_key);
+void ripfe_DDH_fe_key_init(ripfe_DDH_fe_key *FE_key) {
+    ipfe_DDH_fe_key_init(&FE_key->fe_key);
 
     mpz_inits(FE_key->d, FE_key->zk, NULL);
     return;
 }
 
 
-void rfe_DDH_fe_key_free(rfe_DDH_fe_key *FE_key) {
-    fe_DDH_fe_key_free(&FE_key->fe_key);
+void ripfe_DDH_fe_key_free(ripfe_DDH_fe_key *FE_key) {
+    ipfe_DDH_fe_key_free(&FE_key->fe_key);
     
     mpz_clears(FE_key->d, FE_key->zk, NULL);
     return;
 }
 
 
-void rfe_DDH_generate_master_keys(rfe_DDH_sec_key *MSK, rfe_DDH *S, double timesSetUp[]) {
+void ripfe_DDH_generate_master_keys(ripfe_DDH_sec_key *MSK, ripfe_DDH *S, double timesSetUp[]) {
     // Sample seed_u
     generate_seed(MSK->seed_u, SEED_SIZE);
 
 
     // Generate msk for the non-randomized scheme
-    fe_DDH_generate_master_keys(&MSK->msk, &S->s, timesSetUp);
+    ipfe_DDH_generate_master_keys(&MSK->msk, &S->s, timesSetUp);
 
     return;
 }
 
 
-bool rfe_DDH_encrypt(fe_DDH_ciphertext *c, rfe_DDH *S, mpz_t *x, rfe_DDH_sec_key *MSK, double timesEnc[]) {
+bool ripfe_DDH_encrypt(ipfe_DDH_ciphertext *c, ripfe_DDH *S, mpz_t *x, ripfe_DDH_sec_key *MSK, double timesEnc[]) {
     // Verify ciphertext is in bound
     bool check = true;
     size_t Sl = S->s.l;
@@ -128,7 +128,7 @@ bool rfe_DDH_encrypt(fe_DDH_ciphertext *c, rfe_DDH *S, mpz_t *x, rfe_DDH_sec_key
     // for(size_t i = 0; i < Sl; ++i) mpz_clear(u[i]);
     // free(u);
 
-    bool err = fe_DDH_encrypt(c, &S->s, d, &MSK->msk, timesEnc);
+    bool err = ipfe_DDH_encrypt(c, &S->s, d, &MSK->msk, timesEnc);
 
     for(size_t i = 0; i < Sl; ++i) mpz_clear(d[i]);
     free(d);
@@ -137,10 +137,10 @@ bool rfe_DDH_encrypt(fe_DDH_ciphertext *c, rfe_DDH *S, mpz_t *x, rfe_DDH_sec_key
 }
 
 
-bool rfe_DDH_derive_fe_key(rfe_DDH_fe_key *FE_key, rfe_DDH *S, rfe_DDH_sec_key *MSK, mpz_t *y, mpz_t e_verification, double timesKeyGen[]) {
+bool ripfe_DDH_derive_fe_key(ripfe_DDH_fe_key *FE_key, ripfe_DDH *S, ripfe_DDH_sec_key *MSK, mpz_t *y, mpz_t e_verification, double timesKeyGen[]) {
     
     // Get the non-randomized functional decryption key
-    bool err = fe_DDH_derive_fe_key(&FE_key->fe_key, &S->s, &MSK->msk, y, timesKeyGen);
+    bool err = ipfe_DDH_derive_fe_key(&FE_key->fe_key, &S->s, &MSK->msk, y, timesKeyGen);
 
     // Generate e and u_y
     mpz_t e, u_y;
@@ -203,13 +203,13 @@ bool rfe_DDH_derive_fe_key(rfe_DDH_fe_key *FE_key, rfe_DDH *S, rfe_DDH_sec_key *
 }
 
 
-bool rfe_DDH_decrypt(mpz_t result, rfe_DDH *S, fe_DDH_ciphertext *ciphertext, rfe_DDH_fe_key *FE_key, mpz_t *y, double timesDec[]) {
+bool ripfe_DDH_decrypt(mpz_t result, ripfe_DDH *S, ipfe_DDH_ciphertext *ciphertext, ripfe_DDH_fe_key *FE_key, mpz_t *y, double timesDec[]) {
     mpz_t bound, t, res;
     mpz_inits(bound, t, res, NULL);
 
-    bool err = fe_DDH_decrypt_exp(res, &S->s, ciphertext, &FE_key->fe_key, y, timesDec);
+    bool err = ipfe_DDH_decrypt_exp(res, &S->s, ciphertext, &FE_key->fe_key, y, timesDec);
     if(!err) {
-        printf("Error is in fe_decrypt\n");
+        printf("Error is in ipfe_decrypt\n");
         return err;
     } 
 
@@ -236,10 +236,7 @@ bool rfe_DDH_decrypt(mpz_t result, rfe_DDH *S, fe_DDH_ciphertext *ciphertext, rf
     }
     mpz_add(bound, bound, alpha);
 
-    // rfe_error error = cfe_baby_giant_with_neg(result, res, S->s.g, S->s.p, S->s.q, bound);
-    // rfe_error error = rfe_baby_giant_neg(result, res, S->s.g, S->s.p, S->s.q, bound);
     int error = baby_giant_2(result, res, S->s.g, S->s.p, bound);
-    // cfe_baby_giant(mpz_t res, mpz_t h, mpz_t g, mpz_t p, mpz_t order, mpz_t bound)
     end = clock();
     timesDec[4] = timesDec[4] + ((double)(end - begin) / CLOCKS_PER_SEC);
     

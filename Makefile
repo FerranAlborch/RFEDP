@@ -22,7 +22,9 @@ BIN = $(PROJECT)
 
 # Source directory
 SOURCE = $(shell find src -type f | grep '\.c$$')
-SOURCE += test.c
+#SOURCE += test_ripfe_DDH.c
+#SOURCE += test_ripfe_FH.c
+SOURCE += test_rqfe_FH.c
 CPPSOURCE = $(shell find src -type f | grep '\.cpp$$')
 
 # Object files 
@@ -33,7 +35,7 @@ OBJECT = $(SOURCE:.c=.o) $(CPPSOURCE:.cpp=.o)
 INCLUDE_DIR = include
 
 # External libraries
-EXT_LIB = -lgmp -lm 
+EXT_LIB = -lgmp -lm -lmclbn384_256 -lmcl
 # EXT_LIB += -fopenmp
 
 # Build all target

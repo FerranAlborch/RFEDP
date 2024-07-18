@@ -16,6 +16,9 @@
 */
 
 #include <gmp.h>
+#include <mcl/bn_c384_256.h>
+#include <string>
+#include "utils/PG.h"
 
 /**
 * \file
@@ -36,3 +39,16 @@
 * \param bound A bound on the result of the discrete logarithm.
 */
 int baby_giant_2(mpz_t res, mpz_t h, mpz_t g, mpz_t p, mpz_t bound);
+
+
+/**
+* \fn int baby_giant_mcl(mclBnFr res, mclBnGT h, mclBnGT gT, PG pg, mclBnFr bound)
+* \brief It computes the discrete logarithm in GT.
+*
+* \param res A mclBnFr element to store the result.
+* \param h The value from which the discrete logarithm is computed.
+* \param gT The base over which the discrete logarithm is computed.
+* \param pg The representation of the pairing groups.
+* \param bound A bound on the result of the discrete logarithm.
+*/
+int baby_giant_mcl(mclBnFr res, mclBnGT h, mclBnGT gT, PG pg, mclBnFr bound);

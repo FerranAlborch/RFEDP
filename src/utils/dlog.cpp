@@ -62,6 +62,36 @@ public:
     }
 };
 
+class mclGTInt {
+    mclBnGT _val;
+
+    mclGTInt() {
+        mclBnGT_clear(&_val);
+    }
+
+    mclGTInt(const mclBnGT& x) {
+        _val = x;
+    }
+
+    /* Not sure it makes sense
+    mclGTInt(int x) {
+        char buf[1000];
+        mclBnFr tmp;
+        sprintf(buf, "%d", x);
+        mclBnFr_setStr(&tmp, buf, strlen(buf), 10);
+        mclBnGT_pow(&_val, &pg.gT, &tmp);
+    }*/
+
+    mclGTInt(const mclGTInt& other) {
+        if (this != &other) {
+            _val = other._val;
+        }
+        return *this;
+    }
+
+    
+}
+
 struct GmpHasher {
     std::size_t operator()(const GMPInt& k) const {
         // This is a simplistic approach; you might need a more sophisticated one.
@@ -134,4 +164,18 @@ int baby_giant_2(mpz_t res, mpz_t h, mpz_t g, mpz_t p, mpz_t bound){
 
     mpz_clears(tmp, z, NULL);
     return err;
+}
+
+int baby_giant_mcl(mclBnFr res, mclBnGT h, mclBnGT gT, PG pg, mclBnFr bound){
+    mclBnFr tmp;
+    mclBnGT z;
+    
+    int err = -1;
+    uint64_t m;
+    mclBnFr_squareRoot(&tmp, &bound);
+
+    // If tmp fits ulong put it in else return -1
+
+
+
 }

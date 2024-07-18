@@ -19,24 +19,24 @@
 #include <gmp.h>
 #include <time.h>
 #include <stdint.h>
-#include "RIPFE/rfe_DDH.h"
+#include "RFE/ripfe_DDH.h"
 #include "config.h"
 
 
 
 // Function for the SetUp of the scheme. Includes initialization of the scheme and generation of the master secret key
-bool SetUp(rfe_DDH *S, rfe_DDH_sec_key *MSK, double timesSetUp[]) {
+bool SetUp(ripfe_DDH *S, ripfe_DDH_sec_key *MSK, double timesSetUp[]) {
 
     // Generate the master secret key and the precomputations for FComb
-    rfe_DDH_generate_master_keys(MSK, S, timesSetUp);
+    ripfe_DDH_generate_master_keys(MSK, S, timesSetUp);
 
     return true;
 }
 
 
 // Function for encryption of a database
-bool Encrypt(rfe_DDH *S, fe_DDH_ciphertext *c, mpz_t *x, rfe_DDH_sec_key *MSK, double timesEnc[]) {
-    bool err = rfe_DDH_encrypt(c, S, x, MSK, timesEnc);
+bool Encrypt(ripfe_DDH *S, ipfe_DDH_ciphertext *c, mpz_t *x, ripfe_DDH_sec_key *MSK, double timesEnc[]) {
+    bool err = ripfe_DDH_encrypt(c, S, x, MSK, timesEnc);
     if (!err) {
         printf("ERROR in RIPFE encryption.\n");
         return err;
@@ -48,8 +48,8 @@ bool Encrypt(rfe_DDH *S, fe_DDH_ciphertext *c, mpz_t *x, rfe_DDH_sec_key *MSK, d
 
 
 // Function for the key derivation
-bool KeyGen(rfe_DDH_fe_key *FE_key, rfe_DDH *S, rfe_DDH_sec_key *MSK, mpz_t *y, mpz_t e_verification, double timesKeyGen[]) {
-    bool err = rfe_DDH_derive_fe_key(FE_key, S, MSK, y, e_verification, timesKeyGen);
+bool KeyGen(ripfe_DDH_fe_key *FE_key, ripfe_DDH *S, ripfe_DDH_sec_key *MSK, mpz_t *y, mpz_t e_verification, double timesKeyGen[]) {
+    bool err = ripfe_DDH_derive_fe_key(FE_key, S, MSK, y, e_verification, timesKeyGen);
     if (!err) {
         printf("ERROR in RIPFE key generation.\n");
         return err;
@@ -60,8 +60,8 @@ bool KeyGen(rfe_DDH_fe_key *FE_key, rfe_DDH *S, rfe_DDH_sec_key *MSK, mpz_t *y, 
 
 
 // Function for the decryption
-bool Decrypt(mpz_t result, rfe_DDH *S, fe_DDH_ciphertext *ciphertext, rfe_DDH_fe_key *FE_key, mpz_t *y, double timesDec[]) {
-    bool err = rfe_DDH_decrypt(result, S, ciphertext, FE_key, y, timesDec);
+bool Decrypt(mpz_t result, ripfe_DDH *S, ipfe_DDH_ciphertext *ciphertext, ripfe_DDH_fe_key *FE_key, mpz_t *y, double timesDec[]) {
+    bool err = ripfe_DDH_decrypt(result, S, ciphertext, FE_key, y, timesDec);
     if (!err) {
         printf("ERROR in RIPFE decryption.\n");
         return err;
@@ -119,28 +119,30 @@ int main(int argc, char *argv[]) {
 
 
     for (int i = 0; i < LOOP; ++i) {
+        fprintf(stderr,"LOOP %d: ", i+1);
+
         // Initialize public parameters
-        rfe_DDH S;
-        bool err = rfe_DDH_precomp_init(&S, l, bound_X, Q, bound_Y);
+        ripfe_DDH S;
+        bool err = ripfe_DDH_precomp_init(&S, l, bound_X, Q, bound_Y);
         if (!err) {
-            printf("ERROR in initialization of RIPFE.\n");
+            fprintf(stderr,"SetUp ERROR\n");
             return 0;
         }
 
         // Initialize master secret key
-        rfe_DDH_sec_key MSK;
-        rfe_DDH_sec_key_init(&MSK);
+        ripfe_DDH_sec_key MSK;
+        ripfe_DDH_sec_key_init(&MSK);
 
         // SetUp phase
         begin = clock();
         err = SetUp(&S, &MSK, timesSetUp);
         end = clock();
         if (!err) {
-            printf("ERROR in SetUp phase.\n");
+            fprintf(stderr,"SetUp ERROR\n");
             return 0;
         }
         timeSetUp = timeSetUp + (double)(end - begin) / CLOCKS_PER_SEC;
-        //printf("Finished SetUp\n");
+        fprintf(stderr,"SetUp OK; ");
 
 
         // Initialize plaintext
@@ -162,19 +164,19 @@ int main(int argc, char *argv[]) {
 
         
         // Initialize ciphertext
-        fe_DDH_ciphertext c;
-        fe_DDH_ciphertext_init(&c, &S.s);
+        ipfe_DDH_ciphertext c;
+        ipfe_DDH_ciphertext_init(&c, &S.s);
 
         // Encryption phase
         begin = clock();
         err = Encrypt(&S, &c, x, &MSK, timesEnc);
         end = clock();
         if (!err) {
-            printf("ERROR in Encryption phase.\n");
+            fprintf(stderr,"Encryption ERROR\n");
             return 0;
         }
         timeEncrypt = timeEncrypt + (double)(end - begin) / CLOCKS_PER_SEC;
-        //printf("Finished Encryption\n");
+        fprintf(stderr,"Encryption OK; ");
 
 
         // Initialize query
@@ -196,8 +198,8 @@ int main(int argc, char *argv[]) {
 
 
         // Initialize functional decryption key
-        rfe_DDH_fe_key FE_key;
-        rfe_DDH_fe_key_init(&FE_key);
+        ripfe_DDH_fe_key FE_key;
+        ripfe_DDH_fe_key_init(&FE_key);
 
         mpz_t e_verification;
         mpz_init(e_verification);
@@ -207,11 +209,11 @@ int main(int argc, char *argv[]) {
         err = KeyGen(&FE_key, &S, &MSK, y, e_verification, timesKeyGen);
         end = clock();
         if (!err) {
-            printf("ERROR in Key Generation phase.\n");
+            fprintf(stderr,"Key Generation ERROR\n");
             return 0;
         }
         timeKeyGen = timeKeyGen + (double)(end - begin) / CLOCKS_PER_SEC;
-        //printf("Finished KeyGen\n");
+        fprintf(stderr,"Key Generation OK; ");
         
 
         // Initialize values for verification
@@ -261,11 +263,11 @@ int main(int argc, char *argv[]) {
         err = Decrypt(result, &S, &c, &FE_key, y, timesDec);
         end = clock();
         if (!err) {
-            printf("ERROR in Decryption phase.\n");
+            fprintf(stderr,"Decryption ERROR\n");
             return 0;
         }
         timeDecrypt = timeDecrypt + (double)(end - begin) / CLOCKS_PER_SEC;
-        //printf("Finished Decryption\n");
+        fprintf(stderr,"Decryption OK\n");
         
         
         // printf("Dimension of the input database %ld\n", l);
@@ -282,10 +284,10 @@ int main(int argc, char *argv[]) {
         }
         free(x);
         free(y);
-        fe_DDH_ciphertext_free(&c);
-        rfe_DDH_sec_key_free(&MSK);
-        rfe_DDH_fe_key_free(&FE_key);
-        rfe_DDH_free(&S);
+        ipfe_DDH_ciphertext_free(&c);
+        ripfe_DDH_sec_key_free(&MSK);
+        ripfe_DDH_fe_key_free(&FE_key);
+        ripfe_DDH_free(&S);
     }
 
     
@@ -310,23 +312,31 @@ int main(int argc, char *argv[]) {
     timesDec[3] = timesDec[3] / LOOP;
     timesDec[4] = timesDec[4] / LOOP;
 
+    printf("****************************************************************************\n");
+    printf("Parameters:\n");
+    printf("Dimension of the vectors: l = %ld\n", l);
+    printf("Maximum number of key queries: Q = %d\n", Q);
+    printf("Maximum bits of plaintext input: |X| = %d\n", bits_X);
+    printf("Maximum bits of function input: |Y| = %d\n", bits_Y);
+    printf("\n");
+
     printf("Times:\n");
     printf("Total SetUp time: %fs, of which\n", timeSetUp);
     printf("    Time for sampling each seed: %fs * 3\n", timesSetUp[0]);
     printf("    Time for doing FComb precomputations: %fs * 2\n", timesSetUp[1]);
 
-    printf("\n");
+    // printf("\n");
     printf("Total Encryption time: %fs, of which\n", timeEncrypt);
     printf("    Time for computing C (and D): %fs * 2\n", timesEnc[0]);
     printf("    Time for computing E: %fs\n", timesEnc[1]);
     
-    printf("\n");    
+    // printf("\n");    
     printf("Total Key Generation time: %fs, of which\n", timeKeyGen);
     printf("    Time for computing d_y: %fs\n", timesKeyGen[0]);
     printf("    Time for computing zk_y: %fs\n", timesKeyGen[1]);
     printf("    Time for computing the inner product: %fs * 2\n", timesKeyGen[2]);
     
-    printf("\n");    
+    // printf("\n");    
     printf("Total Decryption time: %fs, of which\n", timeDecrypt);
     printf("    Time for computing large multiexponentiation in numerator: %fs\n", timesDec[0]);
     printf("    Time for computing little multiexponentiation in denominator: %fs\n", timesDec[1]);
@@ -335,8 +345,8 @@ int main(int argc, char *argv[]) {
     printf("    Time for computing the discrete logarithm: %fs\n", timesDec[4]);
 
     // Compute sizes and print them
-    printf("\n");
-    printf("\n");
+    // printf("\n");
+    // printf("\n");
     printf("\n");
     printf("Sizes:\n");
     size_t p_bytes = MODULUS_LEN/8;
@@ -354,7 +364,7 @@ int main(int argc, char *argv[]) {
         printf("Database size: %ldKB\n", size_database/1024);
     }
     else printf("Database size: %ldB\n", size_database);
-    printf("\n");
+    // printf("\n");
 
     // msk: 3 seeds of size seed_size * sizeof(uint64_t)
     size_t size_msk = 3 * SEED_SIZE * sizeof(uint64_t);
@@ -368,7 +378,7 @@ int main(int argc, char *argv[]) {
         printf("Master secret key size: %ldKB\n", size_msk/1024);
     }
     else printf("Master secret key size: %ldB\n", size_msk);
-    printf("\n");
+    // printf("\n");
 
     // ciphertext: vector of elements in Zp and size l+2
     size_t size_ciphertext = (l + 2) * p_bytes;
@@ -379,7 +389,7 @@ int main(int argc, char *argv[]) {
         printf("Ciphertext size: %ldKB\n", size_ciphertext/1024);
     }
     else printf("Ciphertext key size: %ldB\n", size_ciphertext);
-    printf("\n");
+    // printf("\n");
 
     // fe_key: element d, element zk, and two elements in cfe_fe_key all in Zp
     size_t size_fe_key = 4 * p_bytes;
@@ -387,7 +397,8 @@ int main(int argc, char *argv[]) {
         printf("Functional decryption key size: %ldKB\n", size_fe_key/1024);
     }
     else printf("Functional decryption key size: %ldB\n", size_fe_key);
-    printf("\n");
+    // printf("\n");
+    printf("****************************************************************************\n");
 
     // we clear the memory
     mpz_clears(bound_X, bound_Y, NULL);
