@@ -23,6 +23,7 @@
 #include <mcl/bn_c384_256.h>
 #include "IPFE/ipfe_FH.h"
 #include "utils/rand.h"
+#include "utils/dlog.h"
 #include "config.h"
 
 /**
@@ -623,8 +624,6 @@ int main () {
         if(mclBnFr_isEqual(&x_ipfe_verify[i], &x_ipfe[i]) == 0) verify_ct_ipfe = 0;
     }
     printf("Print 1 if x_ipfe is correct: %d\n", verify_ct_ipfe);
-
-
 
 	// Clearing and freeing
 	rqfe_FH_ciphertext_free(&c);

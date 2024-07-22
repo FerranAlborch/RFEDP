@@ -48,7 +48,7 @@ sudo apt-get install libgmp-dev
 ```
 git clone https://github.com/herumi/mcl
 cd mcl
-make -j4
+make -j
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/lib
 ```
 

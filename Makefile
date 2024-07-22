@@ -14,7 +14,7 @@
 CC = gcc
 CFLAGS = -Wall -O2 -Wextra
 CPP = g++
-CPPFLAGS = -std=c++20  -Wall -O2 -Wextra
+CPPFLAGS = -std=c++20 -Wall -O2 -Wextra
 
 # Project and executable
 PROJECT = RFEDP
@@ -22,39 +22,43 @@ BIN = $(PROJECT)
 
 # Source directory
 SOURCE = $(shell find src -type f | grep '\.c$$')
-#SOURCE += test_ripfe_DDH.c
-#SOURCE += test_ripfe_FH.c
-SOURCE += test_rqfe_FH.c
 CPPSOURCE = $(shell find src -type f | grep '\.cpp$$')
 
-# Object files 
+# Test files
+TEST_SOURCES = test_ripfe_DDH.c test_ripfe_FH.c test_rqfe_FH.c
+
+# Object files
 OBJECT = $(SOURCE:.c=.o) $(CPPSOURCE:.cpp=.o)
-# $(info $$OBJECT is [${OBJECT}])
 
 # Include directory
 INCLUDE_DIR = include
+MCL_INCLUDE_DIR = $(MCL_INCLUDE_PATH)
 
 # External libraries
 EXT_LIB = -lgmp -lm -lmclbn384_256 -lmcl
-# EXT_LIB += -fopenmp
+MCL_LIB_PATH = $(MCL_LIB_PATH)
 
 # Build all target
-all: $(BIN)
+all: $(BIN) $(TEST_SOURCES:.c=.out)
 
 # Link executable
 $(BIN): $(OBJECT)
-	$(CPP) $(CPPFLAGS) $^ -o $@ -I$(INCLUDE_DIR) $(EXT_LIB)
-
-%.o: %.c
-	$(CPP) $(CPPFLAGS) -I$(INCLUDE_DIR) -c $< -o $@
+	$(CPP) $(CPPFLAGS) $^ -o $@ -I$(INCLUDE_DIR) -I$(MCL_INCLUDE_DIR) -L$(MCL_LIB_PATH) $(EXT_LIB) 
 
 # Compile object files
-%.o: %.cpp
-	$(CPP) $(CPPFLAGS) -I$(INCLUDE_DIR) -c $< -o $@
+%.o: %.c
+	$(CPP) $(CPPFLAGS) -I$(INCLUDE_DIR) -I$(MCL_INCLUDE_DIR) -c $< -o $@
 
-#Clean target
+%.o: %.cpp
+	$(CPP) $(CPPFLAGS) -I$(INCLUDE_DIR) -I$(MCL_INCLUDE_DIR) -c $< -o $@
+
+# Build test executables
+%.out: %.c
+	$(CPP) $(CPPFLAGS) $< -o $@ -I$(INCLUDE_DIR) -I$(MCL_INCLUDE_DIR) -L$(MCL_LIB_PATH) $(EXT_LIB)
+
+# Clean target
 clean:
-	rm -f $(OBJECT) $(BIN)
+	rm -f $(OBJECT) $(BIN) $(TEST_SOURCES:.c=.out)
 
 # Debug flag
 debug: CFLAGS += -g
@@ -65,5 +69,3 @@ debug: all
 release: CFLAGS += -O3 -march=native -mtune=native 
 release: CPPFLAGS += -O3 -march=native -mtune=native 
 release: all
-
-

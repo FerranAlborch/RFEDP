@@ -20,6 +20,7 @@
 #include <unordered_map>
 #include <cstdint>
 #include "utils/dlog.h"
+#include "utils/mpz_to_mcl.h"
 
 #ifdef __cpluplus
 extern "C" {
@@ -63,6 +64,7 @@ public:
 };
 
 class mclGTInt {
+public:
     mclBnGT _val;
 
     mclGTInt() {
@@ -73,24 +75,25 @@ class mclGTInt {
         _val = x;
     }
 
-    /* Not sure it makes sense
-    mclGTInt(int x) {
-        char buf[1000];
-        mclBnFr tmp;
-        sprintf(buf, "%d", x);
-        mclBnFr_setStr(&tmp, buf, strlen(buf), 10);
-        mclBnGT_pow(&_val, &pg.gT, &tmp);
-    }*/
+    mclGTInt(const mclGTInt& x) {
+        _val = x._val;
+    }
 
-    mclGTInt(const mclGTInt& other) {
+    mclGTInt(const int64_t x) {
+        mclBnGT_setInt(&_val, x);
+    }
+
+    mclGTInt& operator=(const mclGTInt& other) {
         if (this != &other) {
             _val = other._val;
         }
         return *this;
     }
 
-    
-}
+    bool operator==(const mclGTInt& other) const{
+        return mclBnGT_isEqual(&_val, &other._val) == 1;
+    }    
+};
 
 struct GmpHasher {
     std::size_t operator()(const GMPInt& k) const {
@@ -102,6 +105,25 @@ struct GmpHasher {
             // Combine the hash of individual limbs.
             hash_val ^= std::hash<mp_limb_t>()(limbs[i]) + 0x9e3779b9;// + (hash_val << 6) + (hash_val >> 2);
         }
+        return hash_val;
+    }
+};
+
+struct mclGTIntHasher {
+    std::size_t operator()(const mclGTInt& k) const {
+        // This is a simplistic approach; you might need a more sophisticated one.
+        size_t hash_val = 0;
+        for(size_t j = 0 ; j < 12 ; j++){
+            for(size_t i = 0 ; i < 6 ; i++){
+                hash_val ^= std::hash<std::uint64_t>()(k._val.d[j].d[i]) + 0x9e3779b9;// + (hash_val << 6) + (hash_val >> 2);    
+            }
+        }
+        // mp_limb_t *limbs = k._val[0]._mp_d;
+        // size_t num_limbs = std::abs(k._val[0]._mp_size);
+        // for (size_t i = 0; i < num_limbs; ++i) {
+        //     // Combine the hash of individual limbs.
+        //     hash_val ^= std::hash<mp_limb_t>()(limbs[i]) + 0x9e3779b9;// + (hash_val << 6) + (hash_val >> 2);
+        // }
         return hash_val;
     }
 };
@@ -166,16 +188,50 @@ int baby_giant_2(mpz_t res, mpz_t h, mpz_t g, mpz_t p, mpz_t bound){
     return err;
 }
 
-int baby_giant_mcl(mclBnFr res, mclBnGT h, mclBnGT gT, PG pg, mclBnFr bound){
+int baby_giant_mcl(mclBnFr res, mclBnGT h, PG pg, mclBnFr bound){
     mclBnFr tmp;
-    mclBnGT z;
     
     int err = -1;
-    uint64_t m;
+    int64_t m;
     mclBnFr_squareRoot(&tmp, &bound);
-
+    mpz_t tmp_;
+    mpz_init(tmp_);
+    mclBnFr_to_mpz(&tmp_, &tmp, 1);
+    if(mpz_fits_ulong_p(tmp_)){
+        m = static_cast<int64_t>(mpz_get_ui(tmp_));
+        m += 1;
+    }else{
+        return -1;
+    }
     // If tmp fits ulong put it in else return -1
+    std::unordered_map<mclGTInt, int64_t, mclGTIntHasher> map;
+    map.reserve(m);
+    
+    mclGTInt x(1);
 
+    for(int64_t i = 0 ; i < m ; ++i){
+        map.insert({x, i});
+        mclBnGT_mul(&x._val, &x._val, &pg.gT);
+    }
 
+    mclGTInt z;
+    mclBnGT_inv(&z._val, &pg.gT);   
+    mclBnFr m_;
+    mclBnFr_setInt(&m_, m);
+    mclBnGT_pow(&z._val, &z._val, &m_);
 
+    x._val = h;
+
+    for(int64_t i = 0 ; i < m ; ++i){
+        auto it = map.find(x);
+        if (it != map.end()){
+            int64_t r = i*m + it->second;
+            mclBnFr_setInt(&res, r);
+            err = 0;
+            break;
+        }
+        mclBnGT_mul(&x._val, &x._val, &z._val);
+    }
+    mpz_clear(tmp_);
+    return err;
 }
