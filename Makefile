@@ -32,29 +32,42 @@ OBJECT = $(SOURCE:.c=.o) $(CPPSOURCE:.cpp=.o)
 
 # Include directory
 INCLUDE_DIR = include
-MCL_INCLUDE_DIR = $(MCL_INCLUDE_PATH)
+
+ifneq ($(MCL_INCLUDE_PATH),)
+	CPPFLAGS += -I$(MCL_INCLUDE_PATH)
+endif
+
+# MCL_INCLUDE_DIR = $(MCL_INCLUDE_PATH)
 
 # External libraries
-EXT_LIB = -lgmp -lm -lmclbn384_256 -lmcl
-MCL_LIB_PATH = $(MCL_LIB_PATH)
+
+#MCL_LIB_PATH = $(MCL_LIB_PATH)
+
+EXT_LIB = 
+
+ifneq ($(MCL_LIB_PATH),)
+	EXT_LIB = -L$(MCL_LIB_PATH)
+endif
+
+EXT_LIB += -lgmp -lm -lmclbn384_256 -lmcl
 
 # Build all target
 all: $(BIN) $(TEST_SOURCES:.c=.out)
 
 # Link executable
 $(BIN): $(OBJECT)
-	$(CPP) $(CPPFLAGS) $^ -o $@ -I$(INCLUDE_DIR) -I$(MCL_INCLUDE_DIR) -L$(MCL_LIB_PATH) $(EXT_LIB) 
+	$(CPP) $(CPPFLAGS) $^ -o $@ -I$(INCLUDE_DIR) $(EXT_LIB) 
 
 # Compile object files
 %.o: %.c
-	$(CPP) $(CPPFLAGS) -I$(INCLUDE_DIR) -I$(MCL_INCLUDE_DIR) -c $< -o $@
+	$(CPP) $(CPPFLAGS) -I$(INCLUDE_DIR) -c $< -o $@
 
 %.o: %.cpp
-	$(CPP) $(CPPFLAGS) -I$(INCLUDE_DIR) -I$(MCL_INCLUDE_DIR) -c $< -o $@
+	$(CPP) $(CPPFLAGS) -I$(INCLUDE_DIR) -c $< -o $@
 
 # Build test executables
 %.out: %.c
-	$(CPP) $(CPPFLAGS) $< -o $@ -I$(INCLUDE_DIR) -I$(MCL_INCLUDE_DIR) -L$(MCL_LIB_PATH) $(EXT_LIB)
+	$(CPP) $(CPPFLAGS) $< -o $@ -I$(INCLUDE_DIR) $(EXT_LIB)
 
 # Clean target
 clean:
