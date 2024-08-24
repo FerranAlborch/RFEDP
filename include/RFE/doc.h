@@ -16,8 +16,8 @@
 */
 
 /**
-* \defgroup RIPFE RIPFE schemes
-* Randomized inner-product functional encryption schemes
+* \defgroup RFE RFE schemes
+* Randomized functional encryption schemes
 *
 * This package includes schemes instantiating secret-key randomized inner-product functional 
 * encryption: the scheme in Section 4 from the paper "Computational Differential Privacy for 

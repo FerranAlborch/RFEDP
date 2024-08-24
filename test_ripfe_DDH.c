@@ -24,7 +24,7 @@
 
 
 
-// Function for the SetUp of the scheme. Includes initialization of the scheme and generation of the master secret key
+// Function for the SetUp of the scheme. Includes generation of the master secret key from public parameters.
 bool SetUp(ripfe_DDH *S, ripfe_DDH_sec_key *MSK, double timesSetUp[]) {
 
     // Generate the master secret key and the precomputations for FComb
@@ -73,7 +73,7 @@ bool Decrypt(mpz_t result, ripfe_DDH *S, ipfe_DDH_ciphertext *ciphertext, ripfe_
 
 int main(int argc, char *argv[]) {
 
-    // first choose meta-parameters for the scheme
+    // First choose meta-parameters for the scheme
     size_t l = atoi(argv[1]); // dimension of encryption vector taken as input
     int Q = atoi(argv[2]); // number of queries that can be asked taken as input
     
@@ -100,7 +100,7 @@ int main(int argc, char *argv[]) {
     gmp_randseed(state, seed);
     mpz_clear(seed);
 
-
+    // Vectors for storing the timings
     double timeSetUp = 0., timeEncrypt = 0., timeKeyGen = 0., timeDecrypt = 0.;
     
     double timesSetUp[2];
@@ -118,6 +118,7 @@ int main(int argc, char *argv[]) {
     clock_t begin, end;
 
 
+    // Start loop of executions of the scheme
     for (int i = 0; i < LOOP; ++i) {
         fprintf(stderr,"LOOP %d: ", i+1);
 

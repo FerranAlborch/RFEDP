@@ -136,9 +136,6 @@ int ipfe_FH_encrypt_unbounded(ipfe_FH_ciphertext *ct, ipfe_FH *s, mclBnFr *x, ip
 	timesEnc[1] = timesEnc[1] + ((double )(end - begin) / CLOCKS_PER_SEC) / 2;
 
 	// Clear the auxiliary variables
-	mclBnFr_clear(&c);
-	mclBnFr_clear(&aux);
-	mclBnFr_clear(&aux2);
 	return verify;
 }
 
@@ -225,7 +222,7 @@ int ipfe_FH_derive_fe_key_unbounded(ipfe_FH_fe_key *fe_key, ipfe_FH *s, ipfe_FH_
 		mclBnG2_mul(&fe_key->sk[i+2], &s->pg.P2, &sk2[i+1]);
 	}
 	clock_t end = clock();
-	timesKeyGen[1] = timesKeyGen[1] + ((double )(end - begin) / CLOCKS_PER_SEC) / 2;
+	timesKeyGen[1] = timesKeyGen[1] + ((double )(end - begin) / CLOCKS_PER_SEC);
 
 	// Compute sk1
 	begin = clock();
@@ -237,16 +234,9 @@ int ipfe_FH_derive_fe_key_unbounded(ipfe_FH_fe_key *fe_key, ipfe_FH *s, ipfe_FH_
 	}
 	mclBnG2_mul(&fe_key->sk[0], &s->pg.P2, &aux);
 	end = clock();
-	timesKeyGen[0] = timesKeyGen[0] + ((double )(end - begin) / CLOCKS_PER_SEC) / 2;
+	timesKeyGen[0] = timesKeyGen[0] + ((double )(end - begin) / CLOCKS_PER_SEC);
 
 	// Clear the auxiliary variables
-	mclBnFr_clear(&t);
-	mclBnFr_clear(&aux);
-	mclBnFr_clear(&aux2);
-	for(size_t i = 0; i < msk->l; ++i) {
-		mclBnFr_clear(&sk2[i]);
-	}
-	mclBnFr_clear(&sk2[s->l]);
 	free(sk2);
 	return verify;
 }
@@ -324,8 +314,31 @@ void ipfe_FH_decrypt_exp(mclBnGT *r, ipfe_FH *s, ipfe_FH_ciphertext *c, ipfe_FH_
 	// Compute the Final Exp
 	mclBn_finalExp(r, &aux);
 	clock_t end = clock();
-	timesDec[0] = timesDec[0] + ((double )(end - begin) / CLOCKS_PER_SEC) / 2;
+	timesDec[0] = timesDec[0] + ((double )(end - begin) / CLOCKS_PER_SEC);
 
 	// Clear auxiliary values
-	mclBnGT_clear(&aux);
+	//mclBnGT_clear(&aux);
+}
+
+int ipfe_FH_decrypt(mpz_t *r, ipfe_FH *s, ipfe_FH_ciphertext *c, ipfe_FH_fe_key *fe_key, mpz_t bound, double timesDec[]) {
+	mclBnGT aux;
+	mclBnGT v;
+	
+	// Compute the Miller loop of ct and sk
+	clock_t begin = clock();
+	mclBn_millerLoopVec(&aux, c->ct, fe_key->sk, s->l + 2);
+
+	// Compute the Final Exp
+	mclBn_finalExp(&v, &aux);
+	clock_t end = clock();
+	timesDec[0] = timesDec[0] + ((double )(end - begin) / CLOCKS_PER_SEC);
+
+	// Compute dlog
+	begin = clock();
+	mclBnFr result_Fr;
+	int output = baby_giant_mcl(&result_Fr, v, s->pg.gT, bound);
+	mclBnFr_to_mpz(r, &result_Fr, 1);
+	end = clock();
+	timesDec[1] = timesDec[1] + ((double )(end - begin) / CLOCKS_PER_SEC);
+	return output;
 }

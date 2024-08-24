@@ -35,8 +35,10 @@ int mpz_to_mclBnFr(mclBnFr *res, mpz_t *a, size_t size) {
 
 void mclBnFr_to_mpz(mpz_t *res, mclBnFr *a, size_t size) {
 	for(size_t i = 0; i < size; ++i) {
+		// printf("Iteration %ld\n", i);
 		char buf[1600];
 		mclBnFr_getStr(buf, sizeof(buf), &a[i], 16);
+		// printf("Got here\n");
 		mpz_set_str(res[i], buf, 16);
 	}
 	return;

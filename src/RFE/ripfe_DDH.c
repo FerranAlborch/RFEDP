@@ -147,7 +147,7 @@ bool ripfe_DDH_derive_fe_key(ripfe_DDH_fe_key *FE_key, ripfe_DDH *S, ripfe_DDH_s
     mpz_inits(e, u_y, NULL);
 
     clock_t begin = clock();
-    sample_geometric(e, S->epsilon, S->s.bound_Y, S->Q);
+    sample_geometric_IP(e, S->epsilon, S->s.bound_Y, S->Q);
     mpz_set(e_verification, e);
 
     // Sample the secure seed

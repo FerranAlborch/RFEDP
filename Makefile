@@ -52,7 +52,7 @@ endif
 EXT_LIB += -lgmp -lm -lmclbn384_256 -lmcl
 
 # Build all target
-all: $(BIN) $(TEST_SOURCES:.c=.out)
+all: $(TEST_SOURCES:.c=.out)
 
 # Link executable
 $(BIN): $(OBJECT)
@@ -66,8 +66,8 @@ $(BIN): $(OBJECT)
 	$(CPP) $(CPPFLAGS) -I$(INCLUDE_DIR) -c $< -o $@
 
 # Build test executables
-%.out: %.c
-	$(CPP) $(CPPFLAGS) $< -o $@ -I$(INCLUDE_DIR) $(EXT_LIB)
+%.out: %.c $(OBJECT)
+	$(CPP) $(CPPFLAGS) $^ -o $@ -I$(INCLUDE_DIR) $(EXT_LIB)
 
 # Clean target
 clean:

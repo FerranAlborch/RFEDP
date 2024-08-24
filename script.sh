@@ -22,12 +22,40 @@
 # Compile the code
 # make
 
-# Execute the code for the preselected values
-./RFEDP 10 16 24 7 > results/Output1.txt
-./RFEDP 100 16 21 7 > results/Output2.txt
-./RFEDP 1000 16 18 7 > results/Output3.txt
-./RFEDP 10000 16 16 7 > results/Output4.txt
-./RFEDP 100000 16 16 7 > results/Output5.txt
-./RFEDP 1000000 16 16 7 > results/Output6.txt
+# Execute the code for the preselected values for naive RIPFE
+printf "######################### Naive RIPFE #########################"
+printf "Process for ell = 10 has begun.\n"
+./test_ripfe_FH.out 10 16 24 7 > results/RIPFE_FH/Output1.txt
+printf "Process for ell = 10 has finished.\n\n"
+printf "Process for ell = 100 has begun.\n"
+./test_ripfe_FH.out 100 16 21 7 > results/RIPFE_FH/Output2.txt
+printf "Process for ell = 100 has finished.\n\n"
+printf "Process for ell = 1000 has begun.\n"
+./test_ripfe_FH.out 1000 16 18 7 > results/RIPFE_FH/Output3.txt
+printf "Process for ell = 1000 has finished.\n\n"
+printf "Process for ell = 10000 has begun.\n"
+./test_ripfe_FH.out 10000 16 16 7 > results/RIPFE_FH/Output4.txt
+printf "Process for ell = 10000 has finished.\n\n"
+printf "Process for ell = 100000 has begun.\n"
+./test_ripfe_FH.out 100000 16 16 7 > results/RIPFE_FH/Output5.txt
+printf "Process for ell = 100000 has finished.\n\n"
+printf "Process for ell = 1000000 has begun.\n"
+./test_ripfe_FH.out 1000000 16 16 7 > results/RIPFE_FH/Output6.txt
+printf "Process for ell = 1000000 has finished.\n\n\n"
 
-make clean
+# Execute code for RQFE 
+#printf "############################ RIPFE ############################"
+#printf "Process for ell = 10 has begun.\n"
+#./test_rqfe_FH.out 10 16 14 4 > results/RQFE_FH/Output1.txt
+#printf "Process for ell = 10 has finished.\n\n"
+#printf "Process for ell = 100 has begun.\n"
+#./test_rqfe_FH.out 100 16 11 4 > results/RQFE_FH/Output2.txt
+#printf "Process for ell = 100 has finished.\n\n"
+#printf "Process for ell = 1000 has begun.\n"
+#./test_rqfe_FH.out 1000 16 8 4 > results/RQFE_FH/Output3.txt
+#printf "Process for ell = 1000 has finished.\n\n"
+#printf "Process for ell = 10000 has begun.\n"
+#./test_rqfe_FH.out 10000 16 4 4 > results/RQFE_FH/Output4.txt
+#printf "Process for ell = 10000 has finished.\n\n"
+
+#make clean

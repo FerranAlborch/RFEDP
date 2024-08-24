@@ -47,7 +47,6 @@ void geometric_search(mpz_t e, double p) {
     return;
 }
 
-
 void geometric_inversion(mpz_t e, double p) {
 
     double r = (double) rand()/ (double) RAND_MAX;
@@ -57,7 +56,6 @@ void geometric_inversion(mpz_t e, double p) {
     return;
 }
 
-
 void sample_one_sided_geometric(mpz_t e, double p) {
 
     // Two different algorithms depending on how big p is
@@ -66,9 +64,7 @@ void sample_one_sided_geometric(mpz_t e, double p) {
     return;
 }
 
-
-
-void sample_geometric(mpz_t e, double epsilon, mpz_t bound_Y, int Q) {
+void sample_geometric_IP(mpz_t e, double epsilon, mpz_t bound_Y, int Q) {
     
     // Compute value p = exp(-epsilon/(Q*bound_Y))
     mpz_t denom;
@@ -103,6 +99,41 @@ void sample_geometric(mpz_t e, double epsilon, mpz_t bound_Y, int Q) {
     return;
 }
 
+void sample_geometric_Q(mpz_t e, double epsilon, mpz_t bound_X, mpz_t bound_F, int Q, size_t l) {
+    
+    // Compute value p = exp(-epsilon/(2*Q*bound_X*bound_F))
+    mpz_t denom;
+    mpf_t p_mpf, denom_mpf; 
+    mpz_init(denom);
+    mpf_inits(p_mpf, denom_mpf, NULL);
+    mpz_mul(denom, bound_F, bound_X);
+    mpz_mul_ui(denom, denom, 2 * Q * l);
+    mpf_set_d(p_mpf, (double)(-1.0*epsilon));
+    mpf_set_z(denom_mpf, denom);
+    mpf_div(p_mpf, p_mpf, denom_mpf);
+    double p = mpf_get_d(p_mpf);
+    p = exp(p);
+    //printf("The parameter p for the geometric is %.12f\n", p);
+    
+    mpz_clear(denom);
+    mpf_clears(p_mpf, denom_mpf, NULL);
+
+    
+    // Compute two one-sided geometrics and substract them
+    mpz_t e1, e2;
+    mpz_inits(e1, e2, NULL);
+    sample_one_sided_geometric(e1, 1-p);
+    //gmp_printf("First sample of the one-sided geometric distribution %Zd\n", e1);
+    sample_one_sided_geometric(e2, 1-p);
+    //gmp_printf("Second sample of the one-sided geometric distribution %Zd\n", e2);
+    mpz_sub(e, e1, e2);
+    //gmp_printf("Sample of the two-sided geometric distribution %Zd\n", e);
+
+
+    mpz_clears(e1, e2, NULL);
+
+    return;
+}
 
 void generate_seed(mpz_t result, size_t seed_size) {
     // Generate secure seed of size seed_size * 64

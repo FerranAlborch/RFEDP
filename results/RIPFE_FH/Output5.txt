@@ -1,0 +1,30 @@
+****************************************************************************
+Parameters:
+Dimension of the vectors: l = 100000
+Maximum number of key queries: Q = 16
+Maximum bits of plaintext input: |X| = 16
+Maximum bits of function input: |y| = 7
+
+Times:
+Total SetUp time: 0.018302s, of which
+    Time for computing public parameters: 0.009601s
+    Time for sampling IPFE.msk: 0.008700s
+Total Encryption time: 4.385606s, of which
+    Time for verifying x is in bound: 0.000259s
+    Time for computing input for IPFE: 0.008815s
+    Time for computing IPFE.c: 2.188284s
+Total Key Generation time: 7.638181s, of which
+    Time for verifying y is in bound: 0.000231s
+    Time for computing input for IPFE: 0.006779s
+    Time for computing IPFE.sk: 7.631130s
+Total Decryption time: 13.636292s, of which
+    Time for computing bound: 0.000818s
+    Time for computing pairing: 12.197081s
+    Time for computing the discrete logarithm: 1.438387s
+
+Sizes:TODO
+Database size: 781KB
+Master secret key size: 6MB
+Ciphertext size: 13MB
+Functional decryption key size: 27MB
+****************************************************************************

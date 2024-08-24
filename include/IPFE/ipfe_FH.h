@@ -23,6 +23,7 @@
 #include <mcl/bn_c384_256.h>
 #include "utils/mpz_to_mcl.h"
 #include "utils/PG.h"
+#include "utils/dlog.h"
 
 /**
 * \file
@@ -215,3 +216,17 @@ int ipfe_FH_derive_fe_key_bounded(ipfe_FH_fe_key *fe_key, ipfe_FH *s, ipfe_FH_se
 * \param timesDec An array to store the timings of this protocol.
 */
 void ipfe_FH_decrypt_exp(mclBnGT *r, ipfe_FH *s, ipfe_FH_ciphertext *c, ipfe_FH_fe_key *fe_key, double timesDec[]);
+
+/**
+* \fn int ipfe_FH_decrypt(mpz_t *r, ipfe_FH *s, ipfe_FH_ciphertext *c, ipfe_FH_fe_key *fe_key, mpz_t bound, double timesDec[]);
+* \brief It decrypts a ciphertext with a functional decryption key following the function-hiding inner-product 
+* scheme returning the value in the group GT.
+*
+* \param r A pointer to a multiple precision element to store the result.
+* \param s A pointer to a ipfe_FH structure.
+* \param ciphertext A pointer to a ipfe_FH_ciphertext structure.
+* \param fe_key A pointer to a ipfe_FH_key structure.
+* \param bound The bound for the result.
+* \param timesDec An array to store the timings of this protocol.
+*/
+int ipfe_FH_decrypt(mpz_t *r, ipfe_FH *s, ipfe_FH_ciphertext *c, ipfe_FH_fe_key *fe_key, mpz_t bound, double timesDec[]);

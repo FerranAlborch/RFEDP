@@ -188,36 +188,47 @@ int baby_giant_2(mpz_t res, mpz_t h, mpz_t g, mpz_t p, mpz_t bound){
     return err;
 }
 
-int baby_giant_mcl(mclBnFr res, mclBnGT h, PG pg, mclBnFr bound){
-    mclBnFr tmp;
+int baby_giant_mcl(mclBnFr *res, mclBnGT h, mclBnGT gT, mpz_t bound){
+    mpz_t tmp;
+    mpz_init(tmp);
     
     int err = -1;
+    
     int64_t m;
-    mclBnFr_squareRoot(&tmp, &bound);
-    mpz_t tmp_;
-    mpz_init(tmp_);
-    mclBnFr_to_mpz(&tmp_, &tmp, 1);
-    if(mpz_fits_ulong_p(tmp_)){
-        m = static_cast<int64_t>(mpz_get_ui(tmp_));
+    mpz_sqrt(tmp, bound);
+    if(mpz_fits_ulong_p(tmp)){
+        m = static_cast<int64_t>(mpz_get_ui(tmp));
         m += 1;
     }else{
         return -1;
     }
+
+
+    // gmp_printf("bound = %Zd\n", bound);
+    // gmp_printf("m = %ld\n", m);
+    // printf("Start precomputation\n");
     // If tmp fits ulong put it in else return -1
     std::unordered_map<mclGTInt, int64_t, mclGTIntHasher> map;
     map.reserve(m);
+
+
+    // printf("precomputation part 2\n");
     
     mclGTInt x(1);
 
     for(int64_t i = 0 ; i < m ; ++i){
         map.insert({x, i});
-        mclBnGT_mul(&x._val, &x._val, &pg.gT);
+        mclBnGT_mul(&x._val, &x._val, &gT);
     }
 
+    // printf("finished precomputation\n");
+
     mclGTInt z;
-    mclBnGT_inv(&z._val, &pg.gT);   
+    mclBnGT_inv(&z._val, &gT); 
+
     mclBnFr m_;
     mclBnFr_setInt(&m_, m);
+
     mclBnGT_pow(&z._val, &z._val, &m_);
 
     x._val = h;
@@ -226,12 +237,12 @@ int baby_giant_mcl(mclBnFr res, mclBnGT h, PG pg, mclBnFr bound){
         auto it = map.find(x);
         if (it != map.end()){
             int64_t r = i*m + it->second;
-            mclBnFr_setInt(&res, r);
+            mclBnFr_setInt(res, r);
             err = 0;
             break;
         }
         mclBnGT_mul(&x._val, &x._val, &z._val);
     }
-    mpz_clear(tmp_);
+    mpz_clear(tmp);
     return err;
 }

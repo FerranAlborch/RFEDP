@@ -58,8 +58,8 @@ void sample_one_sided_geometric(mpz_t e, double p);
 
 
 /**
-* \fn void sample_geometric(mpz_t e, double epsilon, mpz_t bound, int Q)
-* \brief It samples a two-sided geometric with the parameter 
+* \fn void sample_geometric_IP(mpz_t e, double epsilon, mpz_t bound, int Q)
+* \brief It samples a two-sided geometric with the parameter for inner-product:
 * p = exp(-epsilon / (Q * bound_Y) ).
 *
 * \param e A multiple precision integer to store the result.
@@ -67,7 +67,21 @@ void sample_one_sided_geometric(mpz_t e, double p);
 * \param bound The bound for the linear functions to evaluate.
 * \param Q The number of functional key queries supported.
 */
-void sample_geometric(mpz_t e, double epsilon, mpz_t bound, int Q);
+void sample_geometric_IP(mpz_t e, double epsilon, mpz_t bound, int Q);
+
+/**
+* \fn void sample_geometric(mpz_t e, double epsilon, mpz_t bound, int Q)
+* \brief It samples a two-sided geometric with the parameter for quadratic:
+* p = exp(-epsilon / (2 * Q * l * bound_X * bound_F) ).
+*
+* \param e A multiple precision integer to store the result.
+* \param epsilon The privacy budget for differential privacy.
+* \param bound_X The bound for the database values to evaluate.
+* \param bound_X The bound for the function to evaluate.
+* \param Q The number of functional key queries supported.
+* \param Q The size of the database.
+*/
+void sample_geometric_Q(mpz_t e, double epsilon, mpz_t bound_X, mpz_t bound_F, int Q, size_t l);
 
 
 /**
