@@ -318,8 +318,8 @@ int main(int argc, char *argv[]) {
     size_t size_mclBnG2 = 3 * size_mclBnFp2; // 3 coordinates in mclBnFp2
     //size_t size_mclBnGT = 12 * size_mclBnFp; // vector of 12 mclBnFp
 
-    // msk: msk_ipfe (u in Fr^(l+2) + v in Fr^(l+1))
-    size_t size_msk = (l+2)*size_mclBnFr + (l+1)*size_mclBnFr;
+    // msk: 2 * seed (uint_64)
+    size_t size_msk = 2 * SEED_SIZE * sizeof(uint64_t);
     if (size_msk > 1024*1024*1024) {
         printf("Master secret key size: %ldGB\n", size_msk/(1024*1024*1024));
     }
