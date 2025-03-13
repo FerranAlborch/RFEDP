@@ -1,13 +1,18 @@
 # RFEDP - Randomized Functional Encryption for Differential Privacy
-**Change** This repository contains the source code for the evaluation times from the randomized inner product functional encryption scheme in the paper **Computational Differential Privacy for Encrypted Databases Supporting Linear Queries** accepted at Proceedings on Privacy Enhancing Technologies (PoPETs), Issue 4, 2024. 
+This repository contains the source code for the evaluation times for the randomized functional encryption schemes that appear in the thesis manuscript [Private Data Analysis over Encrypted Databases: Mixing Functional Encryption and Computational Differential Privacy](https://theses.hal.science/tel-04987654v1), prepared at the Doctoral School of the Institut Politechnique de Paris and Orange Innovation by Ferran Alborch Escobar. It includes code for evaluation times that were used in the paper [Computational Differential Privacy for Encrypted Databases Supporting Linear Queries](https://doi.org/10.56553/popets-2024-0131) published in the Proceedings on Privacy Enhancing Technologies (PoPETs), Issue 4, pages 583–604, 2024, and also in the paper [Simulation Secure Multi-input Quadratic Functional Encryption: Applications to Differential Privacy](https://eprint.iacr.org/2024/2050) as a preprint.    
 
 **Note:** This code is a proof of concept implementation and not ready for produciton. As such, use in production at your own risk.
 
 # Description
 
-**Change** The purpose of this source code in C and C++ is to give estimates on the evaluation times of the randomized inner product functional encryption (RIPFE) scheme proposed in Section 4 of the article. It is a construction based on any generic inner product functional encryption (IPFE) scheme satisfying simulation security, and for this implementation we base ourselves on the scheme from Section 3 in the paper **Adaptive Simulation Security for Inner Product Functional Encryption** by Agrawal, Libert, Maitra and Titiu published at PKC 2020.
+The purpose of this source code in C and C++ is to give estimates on the evaluation times of the three randomized functional encryption schemes proposed in the thesis. More specifically: the naive randomized inner-product functional encryption scheme based on function-hiding inner-product functional encryption (RIPFE FH) proposed in Section 4.2 of the thesis; the randomized inner-product functional encryption scheme based on standard inner-product functional encryption (RIPFE DDH) proposed in Section 4.3 of the thesis (and section 4 of the PoPETS article); and the randomized quadratic functional encryption scheme based on function-hiding inner-product functional encryption (RQFE FH) proposed in section 6.2 of the thesis (and section 5 of the preprint).
 
-For more information on the choice of scheme and the implementation particulars as well as the results obtained we refer to Section 6 of the paper. For the exact schemes being implemented in this repository we refer to Appendix I of the paper.
+The implementations of the constructions based on function-hiding inner-product 
+
+
+inner product functional encryption (RIPFE) scheme proposed in Section 4 of the article. It is a construction based on any generic inner product functional encryption (IPFE) scheme satisfying simulation security, and for this implementation we base ourselves on the scheme from Section 3 in the paper **Adaptive Simulation Security for Inner Product Functional Encryption** by Agrawal, Libert, Maitra and Titiu published at PKC 2020.
+
+For more information on the choice of scheme and the implementation particulars as well as the results obtained we refer to Section 4.4.2 and Section 6.3.2 of the thesis. 
 
 # Directory Structure
 
@@ -33,7 +38,7 @@ For more information on the choice of scheme and the implementation particulars 
 ## Requirements 
 
 - [GMP](https://gmplib.org/): Library to handle multiple precision integers, under the GNU LGPL v3 license. The version used is 6.2.1. 
-- [mcl](https://github.com/herumi/mcl/tree/master)
+- [mcl](https://github.com/herumi/mcl/tree/master): Library for efficient computation over bilinear pairing groups. 
 
 ## Building Our Code
 
