@@ -22,7 +22,7 @@
 # Compile the code
 # make
 
-# Execute the code for the preselected values for naive RIPFE
+# Execute the code for the preselected values for Naive RIPFE
 printf "######################### Naive RIPFE #########################"
 printf "Process for ell = 10 has begun.\n"
 ./test_ripfe_FH.out 10 16 24 7 > results/RIPFE_FH/Output1.txt
@@ -43,19 +43,40 @@ printf "Process for ell = 1000000 has begun.\n"
 ./test_ripfe_FH.out 1000000 16 16 7 > results/RIPFE_FH/Output6.txt
 printf "Process for ell = 1000000 has finished.\n\n\n"
 
-# Execute code for RQFE 
-#printf "############################ RIPFE ############################"
-#printf "Process for ell = 10 has begun.\n"
-#./test_rqfe_FH.out 10 16 14 4 > results/RQFE_FH/Output1.txt
-#printf "Process for ell = 10 has finished.\n\n"
-#printf "Process for ell = 100 has begun.\n"
-#./test_rqfe_FH.out 100 16 11 4 > results/RQFE_FH/Output2.txt
-#printf "Process for ell = 100 has finished.\n\n"
-#printf "Process for ell = 1000 has begun.\n"
-#./test_rqfe_FH.out 1000 16 8 4 > results/RQFE_FH/Output3.txt
-#printf "Process for ell = 1000 has finished.\n\n"
-#printf "Process for ell = 10000 has begun.\n"
-#./test_rqfe_FH.out 10000 16 4 4 > results/RQFE_FH/Output4.txt
-#printf "Process for ell = 10000 has finished.\n\n"
+# Execute the code for the preselected values for RIPFE
+printf "######################### RIPFE #########################"
+printf "Process for ell = 10 has begun.\n"
+./test_ripfe_DDH.out 10 16 24 7 > results/RIPFE_DDH/Output1.txt
+printf "Process for ell = 10 has finished.\n\n"
+printf "Process for ell = 100 has begun.\n"
+./test_ripfe_DDH.out 100 16 21 7 > results/RIPFE_DDH/Output2.txt
+printf "Process for ell = 100 has finished.\n\n"
+printf "Process for ell = 1000 has begun.\n"
+./test_ripfe_DDH.out 1000 16 18 7 > results/RIPFE_DDH/Output3.txt
+printf "Process for ell = 1000 has finished.\n\n"
+printf "Process for ell = 10000 has begun.\n"
+./test_ripfe_DDH.out 10000 16 16 7 > results/RIPFE_DDH/Output4.txt
+printf "Process for ell = 10000 has finished.\n\n"
+printf "Process for ell = 100000 has begun.\n"
+./test_ripfe_DDH.out 100000 16 16 7 > results/RIPFE_DDH/Output5.txt
+printf "Process for ell = 100000 has finished.\n\n"
+printf "Process for ell = 1000000 has begun.\n"
+./test_ripfe_DDH.out 1000000 16 16 7 > results/RIPFE_DDH/Output6.txt
+printf "Process for ell = 1000000 has finished.\n\n\n"
+
+# Execute the code for the preselected values for RQFE 
+printf "############################ RIPFE ############################"
+printf "Process for ell = 10 has begun.\n"
+./test_rqfe_FH.out 10 16 14 4 > results/RQFE_FH/Output1.txt
+printf "Process for ell = 10 has finished.\n\n"
+printf "Process for ell = 100 has begun.\n"
+./test_rqfe_FH.out 100 16 11 4 > results/RQFE_FH/Output2.txt
+printf "Process for ell = 100 has finished.\n\n"
+printf "Process for ell = 1000 has begun.\n"
+./test_rqfe_FH.out 1000 16 8 4 > results/RQFE_FH/Output3.txt
+printf "Process for ell = 1000 has finished.\n\n"
+printf "Process for ell = 10000 has begun.\n"
+./test_rqfe_FH.out 10000 16 4 4 > results/RQFE_FH/Output4.txt
+printf "Process for ell = 10000 has finished.\n\n"
 
 #make clean
