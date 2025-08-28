@@ -23,7 +23,7 @@
 # make
 
 # Execute the code for the preselected values for Naive RIPFE
-printf "######################### Naive RIPFE #########################"
+printf "######################### Naive RIPFE #########################\n"
 printf "Process for ell = 10 has begun.\n"
 ./test_ripfe_FH.out 10 16 24 7 > results/RIPFE_FH/Output1.txt
 printf "Process for ell = 10 has finished.\n\n"

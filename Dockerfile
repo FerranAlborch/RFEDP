@@ -24,9 +24,9 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Install necessary packages
 RUN apt-get update && \
     apt-get install -y \
-    build-essential \
+    build-essential wget \
     libgmp-dev \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+    && apt-get clean && rm -rf /var/lib/apt/lists/* 
 
 # Create a directory for the library source code
 WORKDIR /usr/src/mycpp-lib
@@ -34,7 +34,16 @@ WORKDIR /usr/src/mycpp-lib
 # Copy the library source code and Makefile into the container
 COPY . .
 
-# Compile the library using the Makefile
-RUN make release
+RUN wget https://github.com/herumi/mcl/archive/refs/tags/v3.03.tar.gz \
+    && tar -xzvf v3.03.tar.gz \
+    && mv mcl-3.03 mcl \
+    && cd mcl \
+    && make -j$(nproc) \
+    && export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/lib \
+    && cd .. 
 
-ENTRYPOINT /bin/bash
+
+# Compile the library using the Makefile
+RUN make release -j$(nproc)
+
+ENTRYPOINT LD_LIBRARY_PATH=$PWD/mcl/lib /bin/bash

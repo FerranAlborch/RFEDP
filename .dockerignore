@@ -66,6 +66,7 @@ Thumbs.db
 CMakeFiles/
 CMakeCache.txt
 cmake_install.cmake
+Dockerfile
 
 # Ignore autotools generated files
 /configure

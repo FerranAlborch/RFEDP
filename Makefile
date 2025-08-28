@@ -15,10 +15,12 @@ CC = gcc
 CFLAGS = -Wall -O2 -Wextra
 CPP = g++
 CPPFLAGS = -std=c++20 -Wall -O2 -Wextra
-
 # Project and executable
 PROJECT = RFEDP
 BIN = $(PROJECT)
+
+# Current directory
+current_dir = $(shell pwd)
 
 # Source directory
 SOURCE = $(shell find src -type f | grep '\.c$$')
@@ -32,6 +34,7 @@ OBJECT = $(SOURCE:.c=.o) $(CPPSOURCE:.cpp=.o)
 
 # Include directory
 INCLUDE_DIR = include
+INCLUDE_DIR2 = mcl/include/
 
 ifneq ($(MCL_INCLUDE_PATH),)
 	CPPFLAGS += -I$(MCL_INCLUDE_PATH)
@@ -49,25 +52,25 @@ ifneq ($(MCL_LIB_PATH),)
 	EXT_LIB = -L$(MCL_LIB_PATH)
 endif
 
-EXT_LIB += -lgmp -lm -lmclbn384_256 -lmcl
+EXT_LIB +=  -L$(current_dir)/mcl/lib/ -lgmp -lm -lmcl #-lmclbn384_256
 
 # Build all target
 all: $(TEST_SOURCES:.c=.out)
 
 # Link executable
 $(BIN): $(OBJECT)
-	$(CPP) $(CPPFLAGS) $^ -o $@ -I$(INCLUDE_DIR) $(EXT_LIB) 
+	$(CPP) $(CPPFLAGS) $^ -o $@ -I$(INCLUDE_DIR) -I$(INCLUDE_DIR2) $(EXT_LIB) 
 
 # Compile object files
 %.o: %.c
-	$(CPP) $(CPPFLAGS) -I$(INCLUDE_DIR) -c $< -o $@
+	$(CPP) $(CPPFLAGS) -I$(INCLUDE_DIR) -I$(INCLUDE_DIR2) -c $< -o $@
 
 %.o: %.cpp
-	$(CPP) $(CPPFLAGS) -I$(INCLUDE_DIR) -c $< -o $@
+	$(CPP) $(CPPFLAGS) -I$(INCLUDE_DIR) -I$(INCLUDE_DIR2) -c $< -o $@
 
 # Build test executables
 %.out: %.c $(OBJECT)
-	$(CPP) $(CPPFLAGS) $^ -o $@ -I$(INCLUDE_DIR) $(EXT_LIB)
+	$(CPP) $(CPPFLAGS) $^ -o $@ -I$(INCLUDE_DIR) -I$(INCLUDE_DIR2) $(EXT_LIB)
 
 # Clean target
 clean:

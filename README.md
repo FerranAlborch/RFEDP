@@ -52,15 +52,16 @@ sudo apt-get install libgmp-dev
 ```
 git clone https://github.com/herumi/mcl
 cd mcl
-make -j
+make -j$(nproc)
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/lib
+cd ..
 ```
 
 **Note** The last command line is to add (temporarily) the library to the library path. As such, it needs to be executed again every time a command window is started. For a more definitive solution, add the library to the library path in .bashrc.
 
 2. Run makefile.
 ```
-make release
+make release -j$(nproc)
 ```
 
 ### With Docker
@@ -98,7 +99,7 @@ is satisfied so that the discrete logarithm performed during decryption takes a 
 
 First run the docker image.
 ```
-docker run -it rfedp
+docker run --rm -it rfedp
 ```
 
 This command will give you access to the command line inside the image. Then you can run a test for any of the schemes using the same command as without Docker.
