@@ -89,9 +89,13 @@ To run the code for a test for the full scheme respectively use the following co
 ```
 where $\ell,Q,|X|,|Y|,|F|$ are positive integers representing the several parameters of the scheme. For a thorough explanation we refer to Section 6.2 of the paper. We also recommend looking into the ```include/config.h``` file to see the global parameters of the scheme.
 
-**Note:** As commented in Section 6.2 of the paper it is important that for whatever set of parameters is used, the inequality
+**Note:** For the inner-product functions, as commented in Section 6.2 of the paper (and Section 4.4.2 of the thesis), it is important that for whatever set of parameters is used, the inequality
 
-$$\ell\cdot 2^{|X|}\cdot 2^{|Y|}+1000\cdot Q\cdot 2^{|Y|}\leq 2^{40}$$
+$$ \ell\cdot 2^{|X|}\cdot 2^{|Y|}+1000\cdot Q\cdot 2^{|Y|}\leq 2^{40} $$
+
+is satisfied so that the discrete logarithm performed during decryption takes a reasonable ammount of time. Similarly, for the quadratic functions, as commented in Section 7.2 of the paper (and Section 6.3.2 of the thesis), it is important that for whatever set of parameters is used, the inequality
+
+$$ \ell^2\cdot 2^{|X|^2}\cdot 2^{|F|}+2000\cdot\ell\cdot 2^{|X|}\cdot 2^{|F|}\leq 2^{40} $$
 
 is satisfied so that the discrete logarithm performed during decryption takes a reasonable ammount of time.
 
