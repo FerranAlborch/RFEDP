@@ -95,7 +95,7 @@ $$ \ell\cdot 2^{|X|}\cdot 2^{|Y|}+1000\cdot Q\cdot 2^{|Y|}\leq 2^{40} $$
 
 is satisfied so that the discrete logarithm performed during decryption takes a reasonable ammount of time. Similarly, for the quadratic functions, as commented in Section 7.2 of the paper (and Section 6.3.2 of the thesis), it is important that for whatever set of parameters is used, the inequality
 
-$$ \ell^2\cdot 2^{|X|^2}\cdot 2^{|F|}+2000\cdot\cdot Q\ell\cdot 2^{|X|}\cdot 2^{|F|}\leq 2^{40} $$
+$$ \ell^2\cdot 2^{|X|^2}\cdot 2^{|F|}+2000\cdot\cdot Q\cdot\ell\cdot 2^{|X|}\cdot 2^{|F|}\leq 2^{40} $$
 
 is satisfied so that the discrete logarithm performed during decryption takes a reasonable ammount of time.
 
